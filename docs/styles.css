@@ -1,0 +1,37 @@
+/* https://www.joshwcomeau.com/css/custom-css-reset/ */
+*, *::before, *::after { box-sizing: border-box; }
+* { margin: 0; }
+html, body { height: 100%; }
+body { line-height: 1.5; -webkit-font-smoothing: antialiased; }
+img, picture, video, canvas, svg { display: block; max-width: 100%; }
+input, button, textarea, select { font: inherit; }
+p, h1, h2, h3, h4, h5, h6 { overflow-wrap: break-word; }
+#root, #__next { isolation: isolate; }
+/* more css reset */
+table { border-collapse: collapse; border-spacing: 0; }
+
+h2 { margin-top: 2em; text-align: right; }
+
+body {
+  background: #d1b48c;
+  padding: 0px 20px;
+  color: #2c1b2e;
+}
+td { background: #fff4e0; }
+th { background: #8fcccb; color: #285763; }
+
+a { color: #457cd6; }
+a:visited { color: #4b3b9c; }
+a:hover { color: #d46e33; }
+
+th, td {
+  text-align: left;
+  padding: 0.25em 0.5em;
+}
+
+table, th, td {
+  border: 2px solid #2c1b2e;
+}
+
+/* temp */
+body { font-family: monospace; }
