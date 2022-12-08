@@ -1,8 +1,17 @@
+## todo
+
+- [ ] why is livejs so bad in this setup?
+  - [ ] lots of "type is null" errors -- what's up?
+- [ ] see if papaparse has nice conversion to html table function
+- [ ] split tags
+- [ ] tag coloring
+- [ ] dynamic tags
+
+## misc notes
 
 palette https://lospec.com/palette-list/indecision
 
 link at end = CTA, good
-tags should be for sorting, not for tumblr info-embedding. move after words column?
 
 highlight some rows as recommended
 
@@ -17,11 +26,13 @@ read
 
 ## tags
 
+tags should be for sorting, not for tumblr info-embedding. move after words column?
+
 tags have dif colors for dif categories
 e.g. game genre tags are all green, length tags are all purple, etc
 able to drag tags into include/exclude/unbiased buckets
 
-### tags
+### tags to use
 hard
 easy
 best - auto-highlight?
@@ -32,5 +43,5 @@ animation?
 sizecode?
 tiny/small/medium/large
 
-### not tags
+### tags to not use
 pico8
