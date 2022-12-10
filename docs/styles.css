@@ -10,7 +10,10 @@ p, h1, h2, h3, h4, h5, h6 { overflow-wrap: break-word; }
 /* more css reset */
 table { border-collapse: collapse; border-spacing: 0; }
 
+/**/
 /* color */
+/**/
+
 body {
   background: #d1b48c;
   color: #2c1b2e;
@@ -26,7 +29,29 @@ th, td {
   padding: 0.25em 0.5em;
 }
 
+.tag         {color: white}
+.tag:visited {color: white}
+.tag:hover   {color: blue}
+
+.tag[data-id=game]      {background: #100}
+.tag[data-id=tiny]      {background: #300}
+.tag[data-id=puzzle]    {background: #500}
+.tag[data-id=action]    {background: #700}
+.tag[data-id=paper]     {background: #900}
+.tag[data-id=yajilin]   {background: #110}
+.tag[data-id=blog]      {background: #130}
+.tag[data-id=medium]    {background: #150}
+.tag[data-id=code]      {background: #170}
+.tag[data-id=tool]      {background: #190}
+.tag[data-id=animation] {background: #210}
+.tag[data-id=sizecode]  {background: #230}
+.tag[data-id=small]     {background: #250}
+
+.tag[data-state=off]    {background: gray}
+
+/**/
 /* other */
+/**/
 
 body {
   padding: 0px 20px;
@@ -39,6 +64,10 @@ table, th, td {
   border: 2px solid #2c1b2e;
 }
 
+table {
+  width: 100%;
+}
+
 .tag {
   display: inline-block;
   padding: 0em 0.5em;
@@ -47,15 +76,8 @@ table, th, td {
   margin-top: 0.1em;
   margin-bottom: 0.1em;
   white-space: nowrap;
+  transition: background 0.12s;
+  cursor: pointer;
+  border: none;
 }
 
-.tag.off {
-  font-size: 0.5em;
-}
-.tag.on {
-  font-size: 2em;
-}
-
-/*td.col-tags {*/
-  /*max-width: 3%;*/
-/*}*/

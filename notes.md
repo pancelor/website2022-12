@@ -6,9 +6,11 @@
     - maybe hard refresh if you edit live.js...?
     - or go to network tab and disable caching
 - [x] see if papaparse has nice conversion to html table function
-- [ ] split tags
-- [ ] tag coloring
-- [ ] dynamic tags
+- [x] split tags
+- [x] tag coloring
+- [x] dynamic tags
+- [ ] row appear/disappear animations
+- [ ] table size jumps during filtering; annoying
 
 ## misc notes
 

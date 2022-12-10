@@ -1,13 +1,32 @@
-function query(sel) { return document.querySelector(sel) }
-function queryAll(sel) { return document.querySelectorAll(sel) }
-
-function addChild(parent, tagType) {
-  const child = document.createElement(tagType)
-  parent.appendChild(child)
-  return child
+// these go in the url hash, so pls just use lowercase ascii
+const knownTags={
+  game: 1,
+  blog: 1,
+  code: 1,
+  tool: 1,
+  animation: 1,
+  puzzle: 1,
+  action: 1,
+  paper: 1,
+  yajilin: 1,
+  sizecode: 1,
+  tiny: 1,
+  small: 1,
+  medium: 1,
 }
 
 window.addEventListener("DOMContentLoaded", function () {
+  urlhash = parseURLHash()
+
+  //
+  // add filter buttons
+  //
+  filters = urlhash.tags
+  let filterContainer = query("#filterContainer")
+  for (let id of Object.keys(knownTags)) {
+    let tag = addTag(filterContainer,id)
+  }
+
   const tableURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vROGiioq8pwJ7Pt0ZDbjXK3gDHJia1_I4UT-Gw-SYRW-QLQjekFUhGGLHPbmrp2-Q3B2SoqkMv1aNzx/pub?output=csv"
 
   // console.log("csv loading");
@@ -35,18 +54,23 @@ window.addEventListener("DOMContentLoaded", function () {
         parseWords(addChild(tr,"td"),data[i])
         parseLink(addChild(tr,"td"),data[i])
       }
-
-      //
-      // add filter buttons
-      //
-      filters = []
-      let filterContainer = query("#filterContainer")
-      for (let id of Object.keys(knownTags)) {
-        let tag = addTag(filterContainer,id)
-      }
     }
   })
 })
+
+function parseURLHash() {
+  let hash = {}
+  for (let chunk of window.location.hash.substring(1).split("&")) {
+    let parts = chunk.split("=")
+    hash[parts[0]] = parts[1]
+  }
+  if (hash.tags) {
+    hash.tags = hash.tags.split(",")
+  } else {
+    hash.tags = []
+  }
+  return hash
+}
 
 function parseDate(td,data) {
   td.innerText = data.date
@@ -54,22 +78,7 @@ function parseDate(td,data) {
 function parseName(td,data) {
   td.innerText = data.name
 }
-const knownTags={
-  // maps to css props
-  game: {background: "#100", color: "white"},
-  tiny: {background: "#300", color: "white"},
-  puzzle: {background: "#500", color: "white"},
-  action: {background: "#700", color: "white"},
-  paper: {background: "#900", color: "white"},
-  yajilin: {background: "#110", color: "white"},
-  blog: {background: "#130", color: "white"},
-  medium: {background: "#150", color: "white"},
-  code: {background: "#170", color: "white"},
-  tool: {background: "#190", color: "white"},
-  animation: {background: "#210", color: "white"},
-  sizecode: {background: "#230", color: "white"},
-  small: {background: "#250", color: "white"},
-}
+
 function parseTags(td,data) {
   let tags = data.tags.split(",")
   for (let id of tags) {
@@ -81,17 +90,19 @@ function addTag(parent,id) {
   let tagInfo = knownTags[id]
   if (!tagInfo) {
     console.warn("unrecognized tag: ",id)
-    tagInfo = {background: "purple", color: "white"}
+    // tagInfo = {background: "purple", color: "white"}
   }
 
-  let span = addChild(parent,"span")
-  span.className = "tag"
-  span.style.background = tagInfo.background
-  span.style.color = tagInfo.color
-  span.dataset.id = id
-  span.innerText = id
-  span.onclick = tagOnClick
-  return span
+  let button = addChild(parent,"button")
+  button.className = "tag"
+  button.href = "#"
+  // button.style.background = tagInfo.background
+  // button.style.color = tagInfo.color
+  button.dataset.id = id
+  button.innerText = id
+  button.onclick = tagOnClick
+  button.dataset.state = (filters.length === 0 || filters.includes(id)) ? "on" : "off"
+  return button
 }
 function parseWords(td,data) {
   td.innerHTML = data.words
@@ -101,16 +112,19 @@ function parseLink(td,data) {
 }
 
 function tagOnClick(ev) {
+  //
+  // delete tag from filter, and update tag state
+  //
   let id = this.dataset.id
   if (delswap(filters,id)) {
     // console.log("removed tag from filter")
     if (filters.length===0) {
       for (let tag of queryAll(".tag")) {
-        tag.classList.add("on")
+        tag.dataset.state = "on"
       }
     } else {
       for (let tag of queryAll(".tag[data-id="+id+"]")) {
-        tag.classList.add("off")
+        tag.dataset.state = "off"
       }
     }
   } else {
@@ -118,15 +132,19 @@ function tagOnClick(ev) {
     filters.push(id)
     if (filters.length===1) {
       for (let tag of queryAll(".tag")) {
-        tag.classList.add("off")
+        tag.dataset.state = "off"
       }
-    } else {
-      for (let tag of queryAll(".tag[data-id="+id+"]")) {
-        tag.classList.add("on")
-      }
+    }
+    for (let tag of queryAll(".tag[data-id="+id+"]")) {
+      tag.dataset.state = "on"
     }
   }
 
+  //
+  // hide table rows
+  //
+  // todo: switch html table to css table/grid and add animation: ?
+  // https://stackoverflow.com/questions/3508605/how-can-i-transition-height-0-to-height-auto-using-css?rq=1
   let tbody = query("#portfolioTable > tbody")
   for (let tr of tbody.children) {
     if (trPassesFilters(tr)) {
@@ -136,7 +154,8 @@ function tagOnClick(ev) {
     }
   }
 
-  console.log(filters);
+  // console.log(filters);
+  window.location.hash="tags="+filters.join(",")
 }
 
 function trPassesFilters(tr) {
@@ -145,6 +164,10 @@ function trPassesFilters(tr) {
   }
   return true
 }
+
+//
+// helpers
+//
 
 // if elem is in arr, delete it
 //   (by replacing it with the array's last element)
@@ -164,4 +187,13 @@ function delswap(arr, elem) {
 function deliswap(arr, ix) {
   if (ix != null) arr[ix] = arr[arr.length-1]
   arr.length -= 1
+}
+
+function query(sel) { return document.querySelector(sel) }
+function queryAll(sel) { return document.querySelectorAll(sel) }
+
+function addChild(parent, tagType) {
+  const child = document.createElement(tagType)
+  parent.appendChild(child)
+  return child
 }
