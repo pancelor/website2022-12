@@ -10,16 +10,13 @@ p, h1, h2, h3, h4, h5, h6 { overflow-wrap: break-word; }
 /* more css reset */
 table { border-collapse: collapse; border-spacing: 0; }
 
-h2 { margin-top: 2em; text-align: right; }
-
+/* color */
 body {
   background: #d1b48c;
-  padding: 0px 20px;
   color: #2c1b2e;
 }
-td { background: #fff4e0; }
 th { background: #8fcccb; color: #285763; }
-
+td { background: #fff4e0; }
 a { color: #457cd6; }
 a:visited { color: #4b3b9c; }
 a:hover { color: #d46e33; }
@@ -29,9 +26,36 @@ th, td {
   padding: 0.25em 0.5em;
 }
 
+/* other */
+
+body {
+  padding: 0px 20px;
+  font-family: monospace;
+}
+
+h2 { margin-top: 2em; text-align: right; }
+
 table, th, td {
   border: 2px solid #2c1b2e;
 }
 
-/* temp */
-body { font-family: monospace; }
+.tag {
+  display: inline-block;
+  padding: 0em 0.5em;
+  border-radius: 0.3em;
+  margin-right: 0.25em;
+  margin-top: 0.1em;
+  margin-bottom: 0.1em;
+  white-space: nowrap;
+}
+
+.tag.off {
+  font-size: 0.5em;
+}
+.tag.on {
+  font-size: 2em;
+}
+
+/*td.col-tags {*/
+  /*max-width: 3%;*/
+/*}*/
