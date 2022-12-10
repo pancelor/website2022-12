@@ -1,8 +1,11 @@
 ## todo
 
-- [ ] why is livejs so bad in this setup?
-  - [ ] lots of "type is null" errors -- what's up?
-- [ ] see if papaparse has nice conversion to html table function
+- [x] why is livejs so bad in this setup?
+  - [/] lots of "type is null" errors -- what's up?
+  -  the browser cache was the problem, along with mimetypes
+    - maybe hard refresh if you edit live.js...?
+    - or go to network tab and disable caching
+- [x] see if papaparse has nice conversion to html table function
 - [ ] split tags
 - [ ] tag coloring
 - [ ] dynamic tags

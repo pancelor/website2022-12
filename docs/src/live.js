@@ -138,7 +138,7 @@
 
     // act upon a changed url of certain content type
     refreshResource: function (url, type) {
-      console.log("live.js change detected:", {url, type});
+      console.log("live.js change detected: "+ url + " | " + type);
       switch (type.toLowerCase()) {
         // css files can be reloaded dynamically by replacing the link element
         case "text/css":
@@ -170,6 +170,7 @@
         case "application/javascript":
         case "application/x-javascript":
           document.location.reload();
+          break;
         default:
           console.log("live.js unknown MIME:", url, type);
       }
@@ -214,7 +215,13 @@
             var value = xhr.getResponseHeader(h);
             // adjust the simple Etag variant to match on its significant part
             if (h.toLowerCase() == "etag" && value) value = value.replace(/^W\//, '');
-            if (h.toLowerCase() == "content-type" && value) value = value.replace(/^(.*?);.*?$/i, "$1");
+            if (h.toLowerCase() == "content-type" && value) {
+              value = value.replace(/^(.*?);.*?$/i, "$1");
+              // custom overrides; idk why python -m http.server is misbehaving
+              if (url.match(/\.js$/)) value="text/javascript"
+              if (url.match(/\.css$/)) value="text/css"
+              if (url.match(/\.html$/)) value="text/html"
+            }
             info[h] = value;
           }
           callback(url, info);
