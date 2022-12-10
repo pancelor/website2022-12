@@ -11,6 +11,8 @@
 - [x] dynamic tags
 - [ ] row appear/disappear animations
 - [ ] table size jumps during filtering; annoying
+- [ ] could do dotted tag outlines instead of grayout maybe
+- [ ] row colors are bad
 
 ## misc notes
 

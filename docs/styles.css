@@ -15,14 +15,22 @@ table { border-collapse: collapse; border-spacing: 0; }
 /**/
 
 body {
-  background: #d1b48c;
+  background: #2f2b5c;
   color: #2c1b2e;
 }
-th { background: #8fcccb; color: #285763; }
-td { background: #fff4e0; }
+
+#infoContainer {background: #fff4e0}
+h2 > span {background: #fff4e0; padding-left: 1.5em; padding-right: 0.5em}
+
 a { color: #457cd6; }
 a:visited { color: #4b3b9c; }
 a:hover { color: #d46e33; }
+
+th { background: #8fcccb; color: #285763; }
+tr { transition: background 0.12s; }
+tr:nth-child(2n) { background: #fff4e0; }
+tr:nth-child(2n+1) { background: #d1b48c; }
+tr[data-state=on] { background: #8fcccb; }
 
 th, td {
   text-align: left;
@@ -33,6 +41,7 @@ th, td {
 .tag:visited {color: white}
 .tag:hover   {color: blue}
 
+.tag        {transition: background 0.12s,color 0.12s}
 .tag[data-id=game]      {background: #100}
 .tag[data-id=tiny]      {background: #300}
 .tag[data-id=puzzle]    {background: #500}
@@ -58,7 +67,10 @@ body {
   font-family: monospace;
 }
 
-h2 { margin-top: 2em; text-align: right; }
+h2 {
+  margin-top: 2em;
+  text-align: right;
+}
 
 table, th, td {
   border: 2px solid #2c1b2e;
@@ -76,7 +88,6 @@ table {
   margin-top: 0.1em;
   margin-bottom: 0.1em;
   white-space: nowrap;
-  transition: background 0.12s;
   cursor: pointer;
   border: none;
 }

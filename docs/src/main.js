@@ -148,9 +148,15 @@ function tagOnClick(ev) {
   let tbody = query("#portfolioTable > tbody")
   for (let tr of tbody.children) {
     if (trPassesFilters(tr)) {
-      tr.style.display = null
+      // tr.style.display = null
+      if (filters.length>0) {
+        // todo this doesn't update right with multiple filters
+        tr.dataset.state = "on"
+      } else {
+        tr.dataset.state = null
+      }
     } else {
-      tr.style.display = "none"
+      // tr.style.display = "none"
     }
   }
 
