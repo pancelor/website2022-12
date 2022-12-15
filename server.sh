@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 echo "remember to turn off caching in the network tab"
-echo "localhost:8000"
+echo "http://localhost:8000"
 echo ""
 
 python -m http.server --directory docs

@@ -1,18 +1,26 @@
 // these go in the url hash, so pls just use lowercase ascii
+// todo: make these data in sheet 2, not code here on the server (?)
 const knownTags={
-  game: 1,
-  blog: 1,
-  code: 1,
-  tool: 1,
-  animation: 1,
-  puzzle: 1,
-  action: 1,
-  paper: 1,
-  yajilin: 1,
-  sizecode: 1,
-  tiny: 1,
-  small: 1,
-  medium: 1,
+  best:        { title: "some of my best work -- check these out first" },
+  game:        { title: "something you can play" },
+  tool:        { title: "a tool to help other people make things" },
+  blog:        { title: "writings, devlogs, thoughts" },
+  code:        { title: "programming-focused things" },
+  animation:   { title: "tweetcarts and other code-art" },
+  music:       { title: "sounds and time" },
+  puzzle:      { title: "a game about thinking deeply and understanding a system" },
+  action:      { title: "a game about executing task with precise timing and reflexes" },
+  paper:       { title: "a nikoli-stlye logic puzzle you can print on paper" },
+  physical:    { title: "a game you play with cards or other props" },
+  sizecode:    { title: "a game or animation where I can only use a limited amount of code" },
+  about:       { title: "talking about myself" },
+  collab:      { title: "made with other folks" },
+  tutorial:    { title: "I try to explain how to do something" },
+  hard:        { title: "particularly difficult" },
+  tiny:        { title: "takes seconds or minutes to experience" },
+  small:       { title: "takes minutes or hours to experience" },
+  medium:      { title: "takes hours or days to experience" },
+  large:       { title: "takes days or weeks to experience" },
 }
 
 window.addEventListener("DOMContentLoaded", function () {
@@ -27,7 +35,7 @@ window.addEventListener("DOMContentLoaded", function () {
     let tag = addTag(filterContainer,id)
   }
 
-  const tableURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vROGiioq8pwJ7Pt0ZDbjXK3gDHJia1_I4UT-Gw-SYRW-QLQjekFUhGGLHPbmrp2-Q3B2SoqkMv1aNzx/pub?output=csv"
+  const tableURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vROGiioq8pwJ7Pt0ZDbjXK3gDHJia1_I4UT-Gw-SYRW-QLQjekFUhGGLHPbmrp2-Q3B2SoqkMv1aNzx/pub?gid=0&single=true&output=csv"
 
   // console.log("csv loading");
   Papa.parse(tableURL, {
@@ -91,15 +99,15 @@ function addTag(parent,id) {
   if (!tagInfo) {
     console.warn("unrecognized tag: ",id)
     // tagInfo = {background: "purple", color: "white"}
+    tagInfo = {title: "."}
   }
 
   let button = addChild(parent,"button")
   button.className = "tag"
   button.href = "#"
-  // button.style.background = tagInfo.background
-  // button.style.color = tagInfo.color
   button.dataset.id = id
   button.innerText = id
+  button.title = tagInfo.title
   button.onclick = tagOnClick
   button.dataset.state = (filters.length === 0 || filters.includes(id)) ? "on" : "off"
   return button

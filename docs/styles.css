@@ -19,7 +19,11 @@ body {
   color: #2c1b2e;
 }
 
-#infoContainer {background: #fff4e0}
+.postit {
+  background: #fff4e0;
+  padding: 0.5em 0;
+  margin: 0.5em 0;
+}
 h2 > span {background: #fff4e0; padding-left: 1.5em; padding-right: 0.5em}
 
 a { color: #457cd6; }
@@ -41,22 +45,57 @@ th, td {
 .tag:visited {color: white}
 .tag:hover   {color: blue}
 
-.tag        {transition: background 0.12s,color 0.12s}
-.tag[data-id=game]      {background: #100}
-.tag[data-id=tiny]      {background: #300}
-.tag[data-id=puzzle]    {background: #500}
-.tag[data-id=action]    {background: #700}
-.tag[data-id=paper]     {background: #900}
+.tag {
+  transition: background 0.12s,color 0.12s;
+  background: url(/art/missing.png);
+}
+.tag[data-id=game]      {background: #9c1}
+.tag[data-id=puzzle]    {background: #509}
+.tag[data-id=action]    {background: #701}
+.tag[data-id=paper]     {background: #31d}
 .tag[data-id=yajilin]   {background: #110}
 .tag[data-id=blog]      {background: #130}
+.tag[data-id=tiny]      {background: #65a}
+.tag[data-id=small]     {background: #1ab}
 .tag[data-id=medium]    {background: #150}
+.tag[data-id=large]     {background: #a74}
 .tag[data-id=code]      {background: #170}
+.tag[data-id=hard]      {background: #d21}
 .tag[data-id=tool]      {background: #190}
-.tag[data-id=animation] {background: #210}
-.tag[data-id=sizecode]  {background: #230}
-.tag[data-id=small]     {background: #250}
+.tag[data-id=animation] {background: #415}
+.tag[data-id=sizecode]  {background: #613}
+.tag[data-id=about]     {background: #664}
+.tag[data-id=physical]  {background: #2d6}
+.tag[data-id=collab]    {background: #250}
+.tag[data-id=best]      {background: #d91}
+.tag[data-id=tutorial]  {background: #23b}
+.tag[data-id=music]     {background: #421}
 
 .tag[data-state=off]    {background: gray}
+
+/*
+category based colors; looks kinda boring tho
+
+.tag[data-id=game]      {background: #509}
+.tag[data-id=animation] {background: #509}
+.tag[data-id=blog]      {background: #509}
+.tag[data-id=tool]      {background: #509}
+.tag[data-id=code]      {background: #509}
+.tag[data-id=music]     {background: #509}
+.tag[data-id=puzzle]    {background: #65a}
+.tag[data-id=action]    {background: #65a}
+.tag[data-id=physical]  {background: #65a}
+.tag[data-id=tiny]      {background: #18b}
+.tag[data-id=small]     {background: #18b}
+.tag[data-id=medium]    {background: #18b}
+.tag[data-id=large]     {background: #18b}
+.tag[data-id=paper]     {background: #8a4}
+.tag[data-id=hard]      {background: #701}
+.tag[data-id=sizecode]  {background: #571}
+.tag[data-id=collab]    {background: #250}
+.tag[data-id=tutorial]  {background: #22c}
+.tag[data-id=best]      {background: #d90}
+*/
 
 /**/
 /* other */
@@ -76,8 +115,17 @@ table, th, td {
   border: 2px solid #2c1b2e;
 }
 
+body {
+  max-width: 1000px;
+}
+
+#filterContainer {
+  width:60%;
+  margin-left:auto;
+}
 table {
-  width: 100%;
+  width: 90%;
+  margin: auto;
 }
 
 .tag {
@@ -92,3 +140,6 @@ table {
   border: none;
 }
 
+#footer {
+  height: 25%;
+}
