@@ -68,6 +68,34 @@ window.addEventListener("DOMContentLoaded", function () {
   })
 })
 
+//
+// spreadsheet parsing
+//
+
+function parseDate(td,data) {
+  td.innerText = data.date
+}
+function parseName(td,data) {
+  td.innerText = data.name
+}
+function parseTags(td,data) {
+  let tags = data.tags.split(",")
+  for (let id of tags) {
+    addTag(td,id)
+  }
+  td.classList.add("col-tags")
+}
+function parseWords(td,data) {
+  td.innerHTML = data.words
+}
+function parseLink(td,data) {
+  td.innerHTML = data.link
+}
+
+//
+// logic
+//
+
 function parseURLHash() {
   let hash = {}
   for (let chunk of window.location.hash.substring(1).split("&")) {
@@ -82,20 +110,6 @@ function parseURLHash() {
   return hash
 }
 
-function parseDate(td,data) {
-  td.innerText = data.date
-}
-function parseName(td,data) {
-  td.innerText = data.name
-}
-
-function parseTags(td,data) {
-  let tags = data.tags.split(",")
-  for (let id of tags) {
-    addTag(td,id)
-  }
-  td.classList.add("col-tags")
-}
 function addTag(parent,id) {
   let tagInfo = knownTags[id]
   if (!tagInfo) {
@@ -114,13 +128,18 @@ function addTag(parent,id) {
   button.dataset.state = (filters.length === 0 || filters.includes(id)) ? "on" : "off"
   return button
 }
-function parseWords(td,data) {
-  td.innerHTML = data.words
-}
-function parseLink(td,data) {
-  td.innerHTML = data.link
-}
 
+function setTagState(state, id) {
+  if (id===undefined) {
+    for (let tag of queryAll(".tag")) {
+      tag.dataset.state = state
+    }
+  } else {
+    for (let tag of queryAll(".tag[data-id="+id+"]")) {
+      tag.dataset.state = state
+    }
+  }
+}
 function tagOnClick(ev) {
   //
   // delete tag from filter, and update tag state
@@ -129,25 +148,17 @@ function tagOnClick(ev) {
   if (delswap(filters,id)) {
     // console.log("removed tag from filter")
     if (filters.length===0) {
-      for (let tag of queryAll(".tag")) {
-        tag.dataset.state = "on"
-      }
+      setTagState("on")
     } else {
-      for (let tag of queryAll(".tag[data-id="+id+"]")) {
-        tag.dataset.state = "off"
-      }
+      setTagState("off",id)
     }
   } else {
     // console.log("added tag to filter")
     filters.push(id)
     if (filters.length===1) {
-      for (let tag of queryAll(".tag")) {
-        tag.dataset.state = "off"
-      }
+      setTagState("off")
     }
-    for (let tag of queryAll(".tag[data-id="+id+"]")) {
-      tag.dataset.state = "on"
-    }
+    setTagState("on",id)
   }
 
   updateRowHighlights()

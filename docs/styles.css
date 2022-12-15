@@ -20,13 +20,19 @@ body {
 
 .postit {
   background: #fff4e0;
-  padding: 0.5em 0.5em 0.5em 2em;
+  padding: 0.5em;
+  padding-left: 2em;
   margin: 0.5em 0;
 }
 
 a { color: #457cd6; }
 a:visited { color: #4b3b9c; }
 a:hover { color: #d46e33; }
+
+#filterContainer {
+  border: 2px solid #2f2b5c;
+  border-top-width: 0px;
+}
 
 th { background: #8fcccb; color: #285763; }
 tr { transition: background 0.12s; }
