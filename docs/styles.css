@@ -1,11 +1,10 @@
 /* https://www.joshwcomeau.com/css/custom-css-reset/ */
 *, *::before, *::after { box-sizing: border-box; }
 * { margin: 0; }
-html, body { height: 100%; }
 body { line-height: 1.5; -webkit-font-smoothing: antialiased; }
 img, picture, video, canvas, svg { display: block; max-width: 100%; }
 input, button, textarea, select { font: inherit; }
-p, h1, h2, h3, h4, h5, h6 { overflow-wrap: break-word; }
+/*p, h1, h2, h3, h4, h5, h6 { overflow-wrap: break-word; }*/
 #root, #__next { isolation: isolate; }
 /* more css reset */
 table { border-collapse: collapse; border-spacing: 0; }
@@ -21,10 +20,9 @@ body {
 
 .postit {
   background: #fff4e0;
-  padding: 0.5em 0;
+  padding: 0.5em 0.5em 0.5em 2em;
   margin: 0.5em 0;
 }
-h2 > span {background: #fff4e0; padding-left: 1.5em; padding-right: 0.5em}
 
 a { color: #457cd6; }
 a:visited { color: #4b3b9c; }
@@ -34,7 +32,10 @@ th { background: #8fcccb; color: #285763; }
 tr { transition: background 0.12s; }
 tr:nth-child(2n) { background: #fff4e0; }
 tr:nth-child(2n+1) { background: #d1b48c; }
-tr[data-state=on] { background: #8fcccb; }
+tr[data-filterscore="1"] { background: #8fcccb; }
+tr[data-filterscore="2"] { background: #449489; }
+tr[data-filterscore="3"] { background: #285763; color: #fff4e0; }
+tr[data-filterscore="4"] { background: #2f2b5c; color: #fff4e0; }
 
 th, td {
   text-align: left;
@@ -64,7 +65,7 @@ th, td {
 .tag[data-id=tool]      {background: #190}
 .tag[data-id=animation] {background: #415}
 .tag[data-id=sizecode]  {background: #613}
-.tag[data-id=about]     {background: #664}
+.tag[data-id=about]     {background: #088}
 .tag[data-id=physical]  {background: #2d6}
 .tag[data-id=collab]    {background: #250}
 .tag[data-id=best]      {background: #d91}
@@ -116,12 +117,14 @@ table, th, td {
 }
 
 body {
-  max-width: 1000px;
+  max-width: 900px;
 }
 
 #filterContainer {
   width:60%;
   margin-left:auto;
+  position: sticky;
+  top: 0px;
 }
 table {
   width: 90%;
@@ -141,5 +144,5 @@ table {
 }
 
 #footer {
-  height: 25%;
+  height: 250px;
 }

@@ -62,6 +62,8 @@ window.addEventListener("DOMContentLoaded", function () {
         parseWords(addChild(tr,"td"),data[i])
         parseLink(addChild(tr,"td"),data[i])
       }
+
+      updateRowHighlights()
     }
   })
 })
@@ -148,35 +150,31 @@ function tagOnClick(ev) {
     }
   }
 
-  //
-  // hide table rows
-  //
-  // todo: switch html table to css table/grid and add animation: ?
-  // https://stackoverflow.com/questions/3508605/how-can-i-transition-height-0-to-height-auto-using-css?rq=1
-  let tbody = query("#portfolioTable > tbody")
-  for (let tr of tbody.children) {
-    if (trPassesFilters(tr)) {
-      // tr.style.display = null
-      if (filters.length>0) {
-        // todo this doesn't update right with multiple filters
-        tr.dataset.state = "on"
-      } else {
-        tr.dataset.state = null
-      }
-    } else {
-      // tr.style.display = "none"
-    }
-  }
+  updateRowHighlights()
 
   // console.log(filters);
   window.location.hash="tags="+filters.join(",")
 }
 
-function trPassesFilters(tr) {
-  for (let id of filters) {
-    if (!tr.querySelector(".tag[data-id="+id+"]")) return false
+function updateRowHighlights() {
+  let tbody = query("#portfolioTable > tbody")
+  if (filters.length==0) {
+    for (let tr of tbody.children) {
+      tr.dataset.filterscore = null
+    }
+  } else {
+    for (let tr of tbody.children) {
+      tr.dataset.filterscore=Math.min(4,trFilterScore(tr))
+    }
   }
-  return true
+}
+
+function trFilterScore(tr) {
+  let count=0
+  for (let id of filters) {
+    if (tr.querySelector(".tag[data-id="+id+"]")) count+=1
+  }
+  return count
 }
 
 //
