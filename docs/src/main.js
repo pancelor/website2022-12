@@ -63,6 +63,7 @@ window.addEventListener("DOMContentLoaded", function () {
         parseLink(addChild(tr,"td"),data[i])
       }
 
+      updateTagHighlights()
       updateRowHighlights()
     }
   })
@@ -147,24 +148,27 @@ function tagOnClick(ev) {
   let id = this.dataset.id
   if (delswap(filters,id)) {
     // console.log("removed tag from filter")
-    if (filters.length===0) {
-      setTagState("on")
-    } else {
-      setTagState("off",id)
-    }
   } else {
-    // console.log("added tag to filter")
     filters.push(id)
-    if (filters.length===1) {
-      setTagState("off")
-    }
-    setTagState("on",id)
+    // console.log("added tag to filter")
   }
 
+  updateTagHighlights()
   updateRowHighlights()
 
   // console.log(filters);
   window.location.hash="tags="+filters.join(",")
+}
+
+function updateTagHighlights() {
+  if (filters.length===0) {
+    setTagState("filternone")
+  } else {
+    setTagState("filterno")
+  }
+  for (let id of filters) {
+    setTagState("filteryes",id)
+  }
 }
 
 function updateRowHighlights() {

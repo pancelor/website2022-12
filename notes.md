@@ -31,6 +31,7 @@
 - [ ] hover over name for picture?
   ooh or website2 noel-style slide in maybe... be sure not to make too much work for yourself tho
 - [ ] link at end v. link as the name? might make hover-picture/details pane awkward
+- [ ]  add a "clear tags" button
 
 ## misc notes
 
