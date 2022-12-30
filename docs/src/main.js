@@ -1,28 +1,3 @@
-// these go in the url hash, so pls just use lowercase ascii
-// todo: make these data in sheet 2, not code here on the server (?)
-const knownTags={
-  best:        { title: "some of my best work -- check these out first" },
-  game:        { title: "something you can play" },
-  tool:        { title: "a tool to help other people make things" },
-  blog:        { title: "writings, devlogs, thoughts" },
-  code:        { title: "programming-focused things" },
-  animation:   { title: "tweetcarts and other code-art" },
-  music:       { title: "sounds and time" },
-  puzzle:      { title: "a game about thinking deeply and understanding a system" },
-  action:      { title: "a game about executing task with precise timing and reflexes" },
-  paper:       { title: "a nikoli-stlye logic puzzle you can print on paper" },
-  physical:    { title: "a game you play with cards or other props" },
-  sizecode:    { title: "a game or animation where I can only use a limited amount of code" },
-  about:       { title: "talking about myself" },
-  collab:      { title: "made with other folks" },
-  tutorial:    { title: "I try to explain how to do something" },
-  hard:        { title: "particularly difficult" },
-  tiny:        { title: "takes seconds or minutes to experience" },
-  small:       { title: "takes minutes or hours to experience" },
-  medium:      { title: "takes hours or days to experience" },
-  large:       { title: "takes days or weeks to experience" },
-}
-
 window.addEventListener("DOMContentLoaded", function () {
   urlhash = parseURLHash()
 
@@ -30,41 +5,43 @@ window.addEventListener("DOMContentLoaded", function () {
   // add filter buttons
   //
   filters = urlhash.tags
-  let filterContainer = query("#filterContainer")
-  for (let id of Object.keys(knownTags)) {
-    let tag = addTag(filterContainer,id)
-  }
 
-  const tableURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vROGiioq8pwJ7Pt0ZDbjXK3gDHJia1_I4UT-Gw-SYRW-QLQjekFUhGGLHPbmrp2-Q3B2SoqkMv1aNzx/pub?gid=0&single=true&output=csv"
+  const tagURL     = "https://docs.google.com/spreadsheets/d/e/2PACX-1vROGiioq8pwJ7Pt0ZDbjXK3gDHJia1_I4UT-Gw-SYRW-QLQjekFUhGGLHPbmrp2-Q3B2SoqkMv1aNzx/pub?gid=366002000&single=true&output=csv"
+  const projectURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vROGiioq8pwJ7Pt0ZDbjXK3gDHJia1_I4UT-Gw-SYRW-QLQjekFUhGGLHPbmrp2-Q3B2SoqkMv1aNzx/pub?gid=0&single=true&output=csv"
+
+  let projectData
+  let tagData
 
   // console.log("csv loading");
-  Papa.parse(tableURL, {
+  Papa.parse(tagURL, {
     download: true,
     header: true,
     complete: function(results) {
-      //
-      // parse data
-      //
-
-      // console.log("csv loaded");
+      // console.log("tagURL loaded");
       if (results.errors.length > 0) {
-        console.warn("csv parse errors:");
+        console.warn("tagURL parse errors:");
         console.warn(results.errors);
       }
-      data = results.data
-      let tbody = query("#portfolioTable > tbody")
-      tbody.replaceChildren() // clear "loading" placeholder
-      for (let i=0; i<data.length; i++) {
-        let tr = addChild(tbody,"tr")
-        parseDate(addChild(tr,"td"),data[i])
-        parseName(addChild(tr,"td"),data[i])
-        parseTags(addChild(tr,"td"),data[i])
-        parseWords(addChild(tr,"td"),data[i])
-        parseLink(addChild(tr,"td"),data[i])
-      }
+      tagData = results.data
 
-      updateTagHighlights()
-      updateRowHighlights()
+      Papa.parse(projectURL, {
+        download: true,
+        header: true,
+        complete: function(results) {
+          // console.log("projectURL loaded");
+          if (results.errors.length > 0) {
+            console.warn("projectURL parse errors:");
+            console.warn(results.errors);
+          }
+          projectData = results.data
+
+          processTagData(tagData) // must be first, to populate knownTags
+          processProjectData(projectData)
+
+          updateTagHighlights()
+          updateRowHighlights()
+        }
+      })
     }
   })
 })
@@ -73,6 +50,34 @@ window.addEventListener("DOMContentLoaded", function () {
 // spreadsheet parsing
 //
 
+function processTagData(tagData) {
+  let filterContainer = query("#filterContainer")
+  knownTags = {}
+  for (let i=0; i<tagData.length; i++) {
+    if (tagData[i].enabled === "TRUE") {
+      const id = tagData[i].tag
+      knownTags[id] = {
+        title: tagData[i].title,
+        background: tagData[i].background,
+      }
+      addTag(filterContainer,id)
+    }
+  }
+}
+
+function processProjectData(projectData) {
+  let tbody = query("#portfolioTable > tbody")
+  tbody.replaceChildren() // clear "loading" placeholder
+  for (let i=0; i<projectData.length; i++) {
+    let tr = addChild(tbody,"tr")
+    parseDate(addChild(tr,"td"),projectData[i])
+    parseName(addChild(tr,"td"),projectData[i])
+    parseTags(addChild(tr,"td"),projectData[i])
+    parseWords(addChild(tr,"td"),projectData[i])
+    parseLink(addChild(tr,"td"),projectData[i])
+  }
+}
+
 function parseDate(td,data) {
   td.innerText = data.date
 }
@@ -80,7 +85,7 @@ function parseName(td,data) {
   td.innerText = data.name
 }
 function parseTags(td,data) {
-  let tags = data.tags.split(",")
+  let tags = splitEmpty(data.tags,",")
   for (let id of tags) {
     addTag(td,id)
   }
@@ -103,11 +108,7 @@ function parseURLHash() {
     let parts = chunk.split("=")
     hash[parts[0]] = parts[1]
   }
-  if (hash.tags) {
-    hash.tags = hash.tags.split(",")
-  } else {
-    hash.tags = []
-  }
+  hash.tags = splitEmpty(hash.tags,",")
   return hash
 }
 
@@ -126,21 +127,11 @@ function addTag(parent,id) {
   button.innerText = id
   button.title = tagInfo.title
   button.onclick = tagOnClick
+  button.style.background = tagInfo.background
   button.dataset.state = (filters.length === 0 || filters.includes(id)) ? "on" : "off"
   return button
 }
 
-function setTagState(state, id) {
-  if (id===undefined) {
-    for (let tag of queryAll(".tag")) {
-      tag.dataset.state = state
-    }
-  } else {
-    for (let tag of queryAll(".tag[data-id="+id+"]")) {
-      tag.dataset.state = state
-    }
-  }
-}
 function tagOnClick(ev) {
   //
   // delete tag from filter, and update tag state
@@ -160,12 +151,33 @@ function tagOnClick(ev) {
   window.location.hash="tags="+filters.join(",")
 }
 
+function setTagState(state, id) {
+  const list = (id===undefined) ? queryAll(".tag") : queryAll(".tag[data-id="+id+"]")
+  for (let tag of list) {
+    tag.dataset.state = state // todo: remove this? not doing much anymore
+    // I can't set the color in css b/c element-specific overrides are later than class-specific
+
+    let background = knownTags[tag.dataset.id].background
+    let border = null
+    if (state=="filternone") {
+      // use defaults
+    } else if (state=="filterno") {
+      background = "#9c656c"
+    } else if (state=="filteryes") {
+      border = "4px solid #2c1b2e"
+    }
+    tag.style.background=background
+    tag.style.border=border
+  }
+}
+
 function updateTagHighlights() {
   if (filters.length===0) {
     setTagState("filternone")
   } else {
     setTagState("filterno")
   }
+
   for (let id of filters) {
     setTagState("filteryes",id)
   }
@@ -214,6 +226,13 @@ function delswap(arr, elem) {
 function deliswap(arr, ix) {
   if (ix != null) arr[ix] = arr[arr.length-1]
   arr.length -= 1
+}
+
+// "" => []
+// null, other falsey => []
+// otherwise, acts like str.split
+function splitEmpty(str,delim) {
+  return str ? str.split(delim) : []
 }
 
 function query(sel) { return document.querySelector(sel) }

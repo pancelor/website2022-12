@@ -9,9 +9,13 @@ input, button, textarea, select { font: inherit; }
 /* more css reset */
 table { border-collapse: collapse; border-spacing: 0; }
 
+
+
 /**/
 /* color */
 /**/
+
+
 
 body {
   background: #2f2b5c;
@@ -56,60 +60,15 @@ th, td {
   transition: background 0.12s,color 0.12s;
   background: url(./art/missing.png);
 }
-.tag[data-id=game]      {background: #9c1}
-.tag[data-id=puzzle]    {background: #509}
-.tag[data-id=action]    {background: #701}
-.tag[data-id=paper]     {background: #31d}
-.tag[data-id=yajilin]   {background: #110}
-.tag[data-id=blog]      {background: #130}
-.tag[data-id=tiny]      {background: #65a}
-.tag[data-id=small]     {background: #1ab}
-.tag[data-id=medium]    {background: #150}
-.tag[data-id=large]     {background: #a74}
-.tag[data-id=code]      {background: #170}
-.tag[data-id=hard]      {background: #d21}
-.tag[data-id=tool]      {background: #190}
-.tag[data-id=animation] {background: #415}
-.tag[data-id=sizecode]  {background: #613}
-.tag[data-id=about]     {background: #088}
-.tag[data-id=physical]  {background: #2d6}
-.tag[data-id=collab]    {background: #250}
-.tag[data-id=best]      {background: #f2b63d}
-.tag[data-id=tutorial]  {background: #23b}
-.tag[data-id=music]     {background: #421}
+/*background gets set in JS*/
 
-/*.tag[data-state=filteryes] {border: 6px outset #e34262}*/
-.tag[data-state=filteryes] {border: 4px solid #2c1b2e}
-.tag[data-state=filterno] {background: #9c656c}
-/*.tag[data-state=filteryes] {border: 4px solid #2c1b2e; background: #6d8c32}*/
 
-/*
-category based colors; looks kinda boring tho
-
-.tag[data-id=game]      {background: #509}
-.tag[data-id=animation] {background: #509}
-.tag[data-id=blog]      {background: #509}
-.tag[data-id=tool]      {background: #509}
-.tag[data-id=code]      {background: #509}
-.tag[data-id=music]     {background: #509}
-.tag[data-id=puzzle]    {background: #65a}
-.tag[data-id=action]    {background: #65a}
-.tag[data-id=physical]  {background: #65a}
-.tag[data-id=tiny]      {background: #18b}
-.tag[data-id=small]     {background: #18b}
-.tag[data-id=medium]    {background: #18b}
-.tag[data-id=large]     {background: #18b}
-.tag[data-id=paper]     {background: #8a4}
-.tag[data-id=hard]      {background: #701}
-.tag[data-id=sizecode]  {background: #571}
-.tag[data-id=collab]    {background: #250}
-.tag[data-id=tutorial]  {background: #22c}
-.tag[data-id=best]      {background: #d90}
-*/
 
 /**/
 /* other */
 /**/
+
+
 
 body {
   padding: 0px 20px;

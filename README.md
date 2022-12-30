@@ -1,3 +1,5 @@
 # new website
 
-mainly a portfolio spreadsheet
+basically a portfolio spreadsheet
+
+designed to be easy to update, not to be particularly pretty
