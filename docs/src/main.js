@@ -72,7 +72,8 @@ function processProjectData(projectData) {
     if (projectData[i].enabled === "TRUE") {
       let tr = addChild(tbody,"tr")
       let data = projectData[i]
-      addChild(tr,"td").innerHTML = `<div class="date">${data.date}</div><h3><a href="${data.href}" target=_>${data.name}</a></h3>`
+      let link = data.href ? `<a href="${data.href}" target=_>${data.name}</a>` : data.name
+      addChild(tr,"td").innerHTML = `<div class="date">${data.date}</div><h3>${link}</h3>`
       parseTags(addChild(tr,"td"),data)
       addChild(tr,"td").innerHTML = `<p>${data.words}</p>`
     }

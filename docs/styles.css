@@ -102,6 +102,7 @@ table {
 .date {
   font-size: 0.9em;
   color: gray;
+/*  font-style: italic;*/
 }
 
 .tag {
