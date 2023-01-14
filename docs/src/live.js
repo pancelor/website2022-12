@@ -110,6 +110,7 @@
           continue;
 
         Live.getHead(url, function (url, newInfo) {
+          // console.log("newInfo",newInfo["Content-Type"])
           var oldInfo = resources[url],
               hasChanged = false;
           resources[url] = newInfo;
@@ -139,6 +140,8 @@
     // act upon a changed url of certain content type
     refreshResource: function (url, type) {
       console.log("live.js change detected: "+ url + " | " + type);
+      if (type==null) return
+
       switch (type.toLowerCase()) {
         // css files can be reloaded dynamically by replacing the link element
         case "text/css":
@@ -221,6 +224,7 @@
               if (url.match(/\.js$/)) value="text/javascript"
               if (url.match(/\.css$/)) value="text/css"
               if (url.match(/\.html$/)) value="text/html"
+              // console.log({url})
             }
             info[h] = value;
           }

@@ -69,33 +69,22 @@ function processProjectData(projectData) {
   let tbody = query("#portfolioTable > tbody")
   tbody.replaceChildren() // clear "loading" placeholder
   for (let i=0; i<projectData.length; i++) {
-    let tr = addChild(tbody,"tr")
-    parseDate(addChild(tr,"td"),projectData[i])
-    parseName(addChild(tr,"td"),projectData[i])
-    parseTags(addChild(tr,"td"),projectData[i])
-    parseWords(addChild(tr,"td"),projectData[i])
-    parseLink(addChild(tr,"td"),projectData[i])
+    if (projectData[i].enabled === "TRUE") {
+      let tr = addChild(tbody,"tr")
+      let data = projectData[i]
+      addChild(tr,"td").innerHTML = `<div class="date">${data.date}</div><h3><a href="${data.href}" target=_>${data.name}</a></h3>`
+      parseTags(addChild(tr,"td"),data)
+      addChild(tr,"td").innerHTML = `<p>${data.words}</p>`
+    }
   }
 }
 
-function parseDate(td,data) {
-  td.innerText = data.date
-}
-function parseName(td,data) {
-  td.innerText = data.name
-}
 function parseTags(td,data) {
   let tags = splitEmpty(data.tags,",")
   for (let id of tags) {
     addTag(td,id)
   }
   td.classList.add("col-tags")
-}
-function parseWords(td,data) {
-  td.innerHTML = data.words
-}
-function parseLink(td,data) {
-  td.innerHTML = data.link
 }
 
 //
@@ -176,10 +165,9 @@ function updateTagHighlights() {
     setTagState("filternone")
   } else {
     setTagState("filterno")
-  }
-
-  for (let id of filters) {
-    setTagState("filteryes",id)
+    for (let id of filters) {
+      setTagState("filteryes",id)
+    }
   }
 }
 
