@@ -59,6 +59,7 @@ function processTagData(tagData) {
       knownTags[id] = {
         title: tagData[i].title,
         background: tagData[i].background,
+        color: tagData[i].color,
       }
       addTag(filterContainer,id)
     }
@@ -71,6 +72,7 @@ function processProjectData(projectData) {
   for (let i=0; i<projectData.length; i++) {
     if (projectData[i].enabled === "TRUE") {
       let tr = addChild(tbody,"tr")
+      tr.dataset.default_index = ("000"+i).slice(-4) // used to sort back to default
       let data = projectData[i]
       let link = data.href ? `<a href="${data.href}" target=_>${data.name}</a>` : data.name
       addChild(tr,"td").innerHTML = `<div class="date">${data.date}</div><h3>${link}</h3>`
@@ -118,6 +120,7 @@ function addTag(parent,id) {
   button.title = tagInfo.title
   button.onclick = tagOnClick
   button.style.background = tagInfo.background
+  button.style.color = tagInfo.color
   button.dataset.state = (filters.length === 0 || filters.includes(id)) ? "on" : "off"
   return button
 }
@@ -152,13 +155,33 @@ function setTagState(state, id) {
     if (state=="filternone") {
       // use defaults
     } else if (state=="filterno") {
-      background = "#9c656c"
+      background=colorfade(background)
     } else if (state=="filteryes") {
-      border = "4px solid #2c1b2e"
+      border="4px solid #2c1b2e"
     }
     tag.style.background=background
     tag.style.border=border
   }
+}
+
+// hash-then-6-digit-hexstring in/out. e.g. "#aabbcc"
+// fades the color towards gray
+function colorfade(hexcolor) {
+  var match = hexcolor.match(/^#(..)(..)(..)$/)
+  if (!match) return hexcolor
+
+  var rr = parseInt(match[1],16)/256
+  var gg = parseInt(match[2],16)/256
+  var bb = parseInt(match[3],16)/256
+  // weighted average with gray
+  rr = rr*0.33 + 0.5*0.67
+  gg = gg*0.33 + 0.5*0.67
+  bb = bb*0.33 + 0.5*0.67
+  var rstr = ("0"+((rr*256)&0xFF).toString(16)).slice(-2)
+  var gstr = ("0"+((gg*256)&0xFF).toString(16)).slice(-2)
+  var bstr = ("0"+((bb*256)&0xFF).toString(16)).slice(-2)
+
+  return `#${rstr}${gstr}${bstr}`
 }
 
 function updateTagHighlights() {
@@ -178,10 +201,25 @@ function updateRowHighlights() {
     for (let tr of tbody.children) {
       tr.dataset.filterscore = null
     }
+    sortTable(tbody, (tr)=>-tr.dataset.default_index)
   } else {
     for (let tr of tbody.children) {
       tr.dataset.filterscore=Math.min(4,trFilterScore(tr))
     }
+    sortTable(tbody, (tr)=>tr.dataset.filterscore)
+  }
+}
+
+function sortTable(tbody, key) {
+  var arr = []
+  for (let tr of tbody.children) {
+    arr.push(tr)
+  }
+  arr.sort((a,b)=>key(a)<key(b))
+
+  tbody.replaceChildren() // clear
+  for (let tr of arr) {
+    tbody.appendChild(tr)
   }
 }
 
