@@ -55,6 +55,11 @@ function processTagData(tagData) {
   knownTags = {}
   for (let i=0; i<tagData.length; i++) {
     if (tagData[i].enabled === "TRUE") {
+      if (tagData[i].space_before === "TRUE") {
+        var spacer = addChild(filterContainer,"span")
+        spacer.style = "color:red; margin-right:1.25em; display:inline-block;"
+        spacer.innerHTML = "&nbsp;"
+      }
       const id = tagData[i].tag
       knownTags[id] = {
         title: tagData[i].title,
