@@ -43,33 +43,19 @@ a:hover { color: #d46e33; }
 #portfolioTable tr:nth-child(2n) { background: #fff4e0; }
 #portfolioTable tr:nth-child(2n+1) { background: #d1b48c; }
 /*#portfolioTable tr[data-filterscore="0"] { visibility: collapse; }*/
-#portfolioTable tr[data-filterscore="1"] { background: #8fcccb; }
-#portfolioTable tr[data-filterscore="2"] { background: #449489; color: #fff4e0; }
-#portfolioTable tr[data-filterscore="3"] { background: #285763; color: #fff4e0; }
-#portfolioTable tr[data-filterscore="4"] { background: #2f2b5c; color: #fff4e0; }
-
-#portfolioTable th, td {
-  text-align: left;
-  padding: 0.25em 0.5em;
-}
-
-#contactTable td:nth-child(1) {
-  text-align: right;
-  padding: 0.25em 0.5em;
-}
-
-#contactTable, #contactTable td {
-  border: hidden;
-}
+/*#portfolioTable tr[data-filterscore="1"] { background: #8fcccb; }*/
+/*#portfolioTable tr[data-filterscore="2"] { background: #449489; color: #fff4e0; }*/
+/*#portfolioTable tr[data-filterscore="3"] { background: #285763; color: #fff4e0; }*/
+/*#portfolioTable tr[data-filterscore="4"] { background: #2f2b5c; color: #fff4e0; }*/
 
 
-.tag         {color: white}
-.tag:visited {color: white}
-.tag:hover   {color: blue}
+.tag         { color: white; }
+.tag:visited { color: white; }
+.tag:hover   { color: blue; }
 
 .tag {
   transition: background 0.12s,color 0.12s;
-  background: url(./art/missing.png);
+  background: #858c7d;
 }
 /*background gets set in JS*/
 
@@ -92,7 +78,7 @@ h2 {
 }
 
 table, th, td {
-  border: 2px solid #2c1b2e;
+  border: 1px solid #2c1b2e;
 }
 
 /* centering */
@@ -102,12 +88,6 @@ body {
   margin-right: auto;
 }
 
-#filterContainer {
-  width:60%;
-  margin-left:auto;
-  position: sticky;
-  top: 0px;
-}
 table {
   width: 90%;
   margin: auto;
@@ -128,9 +108,34 @@ table {
   margin-bottom: 0.1em;
   white-space: nowrap;
   cursor: pointer;
-  border: none;
+  border: 2px solid #0000;
 }
 
 #footer {
   height: 250px;
+}
+
+
+
+#filterContainer {
+  width:60%;
+  margin-left:auto;
+  position: sticky;
+  top: 0px;
+}
+
+#portfolioTable th, td {
+  text-align: left;
+  padding: 0.25em 1.0em;
+  border-left: hidden;
+  border-right: hidden;
+}
+
+#contactTable td:nth-child(1) {
+  text-align: right;
+  padding: 0.25em 0.5em;
+}
+
+#contactTable, #contactTable td {
+  border: hidden;
 }

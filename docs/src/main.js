@@ -1,99 +1,126 @@
-window.addEventListener("DOMContentLoaded", function () {
+window.addEventListener("DOMContentLoaded", async function () {
+  //
+  // add filters from hash
+  //
   urlhash = parseURLHash()
-
-  //
-  // add filter buttons
-  //
   filters = urlhash.tags
 
+  //
+  // download + process data
+  //
   const tagURL     = "https://docs.google.com/spreadsheets/d/e/2PACX-1vROGiioq8pwJ7Pt0ZDbjXK3gDHJia1_I4UT-Gw-SYRW-QLQjekFUhGGLHPbmrp2-Q3B2SoqkMv1aNzx/pub?gid=366002000&single=true&output=csv"
   const projectURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vROGiioq8pwJ7Pt0ZDbjXK3gDHJia1_I4UT-Gw-SYRW-QLQjekFUhGGLHPbmrp2-Q3B2SoqkMv1aNzx/pub?gid=0&single=true&output=csv"
 
-  let projectData
-  let tagData
+  knownTags = {}
 
   // console.log("csv loading");
-  Papa.parse(tagURL, {
-    download: true,
-    header: true,
-    complete: function(results) {
-      // console.log("tagURL loaded");
-      if (results.errors.length > 0) {
-        console.warn("tagURL parse errors:");
-        console.warn(results.errors);
-      }
-      tagData = results.data
-
-      Papa.parse(projectURL, {
-        download: true,
-        header: true,
-        complete: function(results) {
-          // console.log("projectURL loaded");
-          if (results.errors.length > 0) {
-            console.warn("projectURL parse errors:");
-            console.warn(results.errors);
-          }
-          projectData = results.data
-
-          processTagData(tagData) // must be first, to populate knownTags
-          processProjectData(projectData)
-
-          updateTagHighlights()
-          updateRowHighlights()
+  let tagPromise = new Promise((resolve, reject) => {
+    let filterContainer = document.querySelector("#filterContainer")
+    Papa.parse(tagURL, {
+      download: true,
+      header: true,
+      skipEmptyLines: true,
+      step: function(results) {
+        // console.log("tagURL step");
+        if (results.errors.length > 0) {
+          console.warn("tagURL step errors:");
+          console.warn(results.errors);
+          return
         }
-      })
-    }
+
+        let data = results.data
+        if (data.enabled !== "TRUE") {
+          return
+        }
+
+        if (data.space_before === "TRUE") {
+          var spacer = addChild(filterContainer,"span")
+          spacer.style = "color:red; margin-right:1.25em; display:inline-block;"
+          spacer.innerHTML = "&nbsp;"
+        }
+
+        const id = data.tag
+        knownTags[id] = {
+          title: data.title,
+          background: data.background,
+          color: data.color,
+        }
+        addTag(filterContainer,id)
+      },
+      complete: function(results) {
+        // console.log("tagURL complete");
+        if (results.errors.length > 0) {
+          console.warn("tagURL complete errors:");
+          console.warn(results.errors);
+          reject(results.errors)
+          return
+        }
+        resolve()
+      },
+    })
   })
+
+  let projectPromise = new Promise((resolve, reject) => {
+    let tbody = document.querySelector("#portfolioTable > tbody")
+    let rowIndex = 0; // increments on each successful row
+    Papa.parse(projectURL, {
+      download: true,
+      header: true,
+      skipEmptyLines: true,
+      step: function(results) {
+        // console.log("projectURL step")
+        if (results.errors.length > 0) {
+          console.warn("projectURL step errors:")
+          console.warn(results.errors)
+          return
+        }
+
+        if (rowIndex === 0) {
+          // clear "loading" placeholder (first time only)
+          tbody.replaceChildren()
+        }
+
+        let data = results.data
+        if (data.enabled !== "TRUE") {
+          return
+        }
+
+        let tr = addChild(tbody,"tr")
+        tr.dataset.default_index = ("0000"+rowIndex).slice(-5) // used to sort back to default order
+        let link = data.href ? `<a href="${data.href}" target=_>${data.name}</a>` : data.name
+        addChild(tr,"td").innerHTML = `<div class="date">${data.date}</div><h3>${link}</h3>`
+        let td_tags = addChild(tr,"td")
+        { // parse tags
+          let tags = splitEmpty(data.tags,",")
+          for (let id of tags) {
+            addTag(td_tags,id)
+          }
+          // td_tags.classList.add("col-tags")
+        }
+
+        addChild(tr,"td").innerHTML = `<p>${data.words}</p>`
+
+        rowIndex += 1
+      },
+      complete: function(results) {
+        // console.log("projectURL complete")
+        if (results.errors.length > 0) {
+          console.warn("projectURL complete errors:")
+          console.warn(results.errors)
+          reject(results.errors)
+          return
+        }
+        resolve()
+      },
+    })
+  })
+
+  await Promise.all([projectPromise, tagPromise]);
+
+  hydrateAllTags() // tags may have been parsed after projects, so recolor them
+  updateTagHighlights()
+  updateRowHighlightsAndOrder()
 })
-
-//
-// spreadsheet parsing
-//
-
-function processTagData(tagData) {
-  let filterContainer = query("#filterContainer")
-  knownTags = {}
-  for (let i=0; i<tagData.length; i++) {
-    if (tagData[i].enabled === "TRUE") {
-      if (tagData[i].space_before === "TRUE") {
-        var spacer = addChild(filterContainer,"span")
-        spacer.style = "color:red; margin-right:1.25em; display:inline-block;"
-        spacer.innerHTML = "&nbsp;"
-      }
-      const id = tagData[i].tag
-      knownTags[id] = {
-        title: tagData[i].title,
-        background: tagData[i].background,
-        color: tagData[i].color,
-      }
-      addTag(filterContainer,id)
-    }
-  }
-}
-
-function processProjectData(projectData) {
-  let tbody = query("#portfolioTable > tbody")
-  tbody.replaceChildren() // clear "loading" placeholder
-  for (let i=0; i<projectData.length; i++) {
-    if (projectData[i].enabled === "TRUE") {
-      let tr = addChild(tbody,"tr")
-      tr.dataset.default_index = ("000"+i).slice(-4) // used to sort back to default
-      let data = projectData[i]
-      let link = data.href ? `<a href="${data.href}" target=_>${data.name}</a>` : data.name
-      addChild(tr,"td").innerHTML = `<div class="date">${data.date}</div><h3>${link}</h3>`
-      parseTags(addChild(tr,"td"),data)
-      addChild(tr,"td").innerHTML = `<p>${data.words}</p>`
-    }
-  }
-}
-
-function parseTags(td,data) {
-  let tags = splitEmpty(data.tags,",")
-  for (let id of tags) {
-    addTag(td,id)
-  }
-  td.classList.add("col-tags")
-}
 
 //
 // logic
@@ -110,24 +137,32 @@ function parseURLHash() {
 }
 
 function addTag(parent,id) {
-  let tagInfo = knownTags[id]
-  if (!tagInfo) {
-    console.warn("unrecognized tag: ",id)
-    // tagInfo = {background: "purple", color: "white"}
-    tagInfo = {title: "."}
-  }
-
   let button = addChild(parent,"button")
+
   button.className = "tag"
   button.href = "#"
-  button.dataset.id = id
   button.innerText = id
-  button.title = tagInfo.title
   button.onclick = tagOnClick
-  button.style.background = tagInfo.background
-  button.style.color = tagInfo.color
+  button.dataset.id = id
   button.dataset.state = (filters.length === 0 || filters.includes(id)) ? "on" : "off"
+  hydrateTag(button) // may fail silently if the tags CSV hasn't been parsed yet
+
   return button
+}
+
+function hydrateAllTags() {
+  for (let button of document.querySelectorAll(".tag")) {
+    hydrateTag(button)
+  }
+}
+
+function hydrateTag(button) {
+  let tagInfo = knownTags[button.dataset.id]
+  if (tagInfo) {
+    button.title = tagInfo.title
+    button.style.background = tagInfo.background
+    button.style.color = tagInfo.color
+  }
 }
 
 function tagOnClick(ev) {
@@ -138,55 +173,42 @@ function tagOnClick(ev) {
   if (delswap(filters,id)) {
     // console.log("removed tag from filter")
   } else {
-    filters.push(id)
     // console.log("added tag to filter")
+    filters.push(id)
   }
 
   updateTagHighlights()
-  updateRowHighlights()
+  updateRowHighlightsAndOrder()
 
   // console.log(filters);
-  window.location.hash="tags="+filters.join(",")
+  window.location.hash = "tags="+filters.join(",")
+
+  document.querySelector("#portfolioTable").scrollIntoView({behavior:"smooth"})
 }
 
 function setTagState(state, id) {
-  const list = (id===undefined) ? queryAll(".tag") : queryAll(".tag[data-id="+id+"]")
-  for (let tag of list) {
-    tag.dataset.state = state // todo: remove this? not doing much anymore
-    // I can't set the color in css b/c element-specific overrides are later than class-specific
+  const query = (id===undefined) ? (".tag") : (".tag[data-id="+id+"]")
+  for (let tag of document.querySelectorAll(query)) {
+    // tag.dataset.debug_state = state
 
-    let background = knownTags[tag.dataset.id].background
-    let border = null
-    if (state=="filternone") {
-      // use defaults
-    } else if (state=="filterno") {
-      background=colorfade(background)
-    } else if (state=="filteryes") {
-      border="4px solid #2c1b2e"
+    // I'd like to set these props with css query selectors,
+    //   but I can't b/c element-specific overrides (like background,
+    //   set in js from the csv data) apply later than class-specific css
+
+    let tagInfo = knownTags[tag.dataset.id]
+    let bg = tagInfo ? tagInfo.background : "#858c7d"
+    if (state == "filternone") {
+      tag.style.background      = bg
+      tag.style["border-color"] = "#0000" // clear
+    } else if (state == "filterno") {
+      tag.style.background      = saturate(bg,0.3)
+      tag.style["border-color"] = "#0000" // clear
+    } else if (state == "filteryes") {
+      tag.style.background      = saturate(bg,1.2)
+      tag.style["border-color"] = "#ffffff" //#2c1b2e
+      // tag.style["font-size"] = "1.33em"
     }
-    tag.style.background=background
-    tag.style.border=border
   }
-}
-
-// hash-then-6-digit-hexstring in/out. e.g. "#aabbcc"
-// fades the color towards gray
-function colorfade(hexcolor) {
-  var match = hexcolor.match(/^#(..)(..)(..)$/)
-  if (!match) return hexcolor
-
-  var rr = parseInt(match[1],16)/256
-  var gg = parseInt(match[2],16)/256
-  var bb = parseInt(match[3],16)/256
-  // weighted average with gray
-  rr = rr*0.33 + 0.5*0.67
-  gg = gg*0.33 + 0.5*0.67
-  bb = bb*0.33 + 0.5*0.67
-  var rstr = ("0"+((rr*256)&0xFF).toString(16)).slice(-2)
-  var gstr = ("0"+((gg*256)&0xFF).toString(16)).slice(-2)
-  var bstr = ("0"+((bb*256)&0xFF).toString(16)).slice(-2)
-
-  return `#${rstr}${gstr}${bstr}`
 }
 
 function updateTagHighlights() {
@@ -200,7 +222,7 @@ function updateTagHighlights() {
   }
 }
 
-function updateRowHighlights() {
+function updateRowHighlightsAndOrder() {
   let tbody = query("#portfolioTable > tbody")
   if (filters.length==0) {
     for (let tr of tbody.children) {
@@ -215,6 +237,19 @@ function updateRowHighlights() {
   }
 }
 
+function trFilterScore(tr) {
+  let count=0
+  for (let id of filters) {
+    if (tr.querySelector(".tag[data-id="+id+"]")) count+=1
+  }
+  return count
+}
+
+//
+// helpers
+//
+
+// sort an html table tbody, by comparing the results of the key function
 function sortTable(tbody, key) {
   var arr = []
   for (let tr of tbody.children) {
@@ -228,17 +263,32 @@ function sortTable(tbody, key) {
   }
 }
 
-function trFilterScore(tr) {
-  let count=0
-  for (let id of filters) {
-    if (tr.querySelector(".tag[data-id="+id+"]")) count+=1
-  }
-  return count
+// hash-then-6-digit-hexstring in/out. e.g. "#aabbcc"
+// fades the color towards gray
+// satu: how saturated. 1=return hexcolor, 0=return gray
+function saturate(hexcolor, satu) {
+  var match = hexcolor.match(/^#(..)(..)(..)$/)
+  if (!match) return hexcolor
+
+  var rr = parseInt(match[1],16)/256
+  var gg = parseInt(match[2],16)/256
+  var bb = parseInt(match[3],16)/256
+  // weighted average with gray
+  rr = rr*satu + 0.5*(1-satu)
+  gg = gg*satu + 0.5*(1-satu)
+  bb = bb*satu + 0.5*(1-satu)
+
+  return `#${channelHex(rr)}${channelHex(gg)}${channelHex(bb)}`
 }
 
-//
-// helpers
-//
+// channel: 0-1 (or beyond) color value
+// return: 2digit hex string, clamped 0-255
+// 0.5 => "80"
+// 1.1 => "ff"
+function channelHex(channel) {
+  channel = Math.min(Math.max(0,channel),1)
+  return ("0"+((channel*255)&0xFF).toString(16)).slice(-2)
+}
 
 // if elem is in arr, delete it
 //   (by replacing it with the array's last element)
