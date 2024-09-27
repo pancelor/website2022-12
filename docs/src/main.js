@@ -205,7 +205,7 @@ function setTagState(state, id) {
       tag.style["border-color"] = "#0000" // clear
     } else if (state == "filteryes") {
       tag.style.background      = saturate(bg,1.2)
-      tag.style["border-color"] = "#ffffff" //#2c1b2e
+      tag.style["border-color"] = "#2c1b2e" //"#ffffff"
       // tag.style["font-size"] = "1.33em"
     }
   }
@@ -231,9 +231,10 @@ function updateRowHighlightsAndOrder() {
     sortTable(tbody, (tr)=>-tr.dataset.default_index)
   } else {
     for (let tr of tbody.children) {
-      tr.dataset.filterscore=Math.min(4,trFilterScore(tr))
+      tr.dataset.filterscore = Math.min(4,trFilterScore(tr))
     }
-    sortTable(tbody, (tr)=>tr.dataset.filterscore)
+    // + to convert to number
+    sortTable(tbody, (tr)=>+tr.dataset.filterscore*1000-tr.dataset.default_index)
   }
 }
 
