@@ -258,7 +258,21 @@ function sortTable(tbody, key) {
   }
   arr.sort((a,b)=>key(a)<key(b))
 
-  tbody.replaceChildren() // clear
+  // filter level separators
+  if (filters.length==0) {
+    for (let tr of arr) {
+       tr.classList.remove("before_filterscore_change");
+    }
+  } else {
+    for (let i=0; i<arr.length-1; i++) {
+      if (arr[i].dataset.filterscore !== arr[i+1].dataset.filterscore) {
+        arr[i].classList.add("before_filterscore_change");
+      }
+    }
+  }
+
+  // replace table
+  tbody.replaceChildren()
   for (let tr of arr) {
     tbody.appendChild(tr)
   }

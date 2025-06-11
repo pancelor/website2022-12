@@ -42,6 +42,7 @@ a:hover { color: #d46e33; }
 #portfolioTable tr { transition: background 0.12s; }
 #portfolioTable tr:nth-child(2n) { background: #fff4e0; }
 #portfolioTable tr:nth-child(2n+1) { background: #d1b48c; }
+#portfolioTable .before_filterscore_change > td { padding-bottom: 8em; }
 #portfolioTable tr[data-filterscore="0"] { visibility: collapse; }
 /*#portfolioTable tr[data-filterscore="1"] { background: #8fcccb; }*/
 /*#portfolioTable tr[data-filterscore="2"] { background: #449489; color: #fff4e0; }*/
